@@ -298,6 +298,7 @@ void KeyboardHandler(char key)
   if(key==' ') 
    {
      midiwrite(0x99, _BASSDRUM_NOTE, 0x65);      
+     return;
    }
   if(key==PS2_ENTER) 
    {
@@ -307,6 +308,7 @@ void KeyboardHandler(char key)
   if(key=='0') 
    {
      midiwrite(0x99,  _SNAREDRUM_NOTE, 0x65);      
+     return;
    }
 }
 
