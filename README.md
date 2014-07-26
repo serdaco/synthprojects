@@ -22,4 +22,4 @@ Arduino Nano Dreamblaster S1 hardware shield
 ===============
 
 Kicad project files for the Arduino Nano shield from http://www.serdashop.com/ArduinoNanoSynthShield
-The Kicad project uses the excellent component library from Walter Lain : http://smisioto.no-ip.org/elettronica/kicad/kicad-en.htm
+The Kicad project uses the excellent component library from Walter Lain : http://www.smisioto.eu/elettronica/kicad/kicad-en.htm
