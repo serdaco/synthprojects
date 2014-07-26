@@ -1,0 +1,171 @@
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 09/06/2014 14:58:44
+
+BeginCmp
+TimeStamp = /521118B7;
+Reference = C1;
+ValeurCmp = 10uF;
+IdModule  = c_tant_C;
+EndCmp
+
+BeginCmp
+TimeStamp = /521118A8;
+Reference = C2;
+ValeurCmp = 100nF;
+IdModule  = c_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /53959F61;
+Reference = C3;
+ValeurCmp = CAP;
+IdModule  = CP_6.3x5mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /52111A8E;
+Reference = J1;
+ValeurCmp = ARDUINO_NANO_HEADER;
+IdModule  = arduino_nano_header;
+EndCmp
+
+BeginCmp
+TimeStamp = /521113C8;
+Reference = J2;
+ValeurCmp = WAVEBLASTER_13X2;
+IdModule  = pin_strip_13x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /521114FD;
+Reference = J3;
+ValeurCmp = JACK_3.5MM_3PIN;
+IdModule  = jack_3.5_pj313d-smt;
+EndCmp
+
+BeginCmp
+TimeStamp = /52112806;
+Reference = J4;
+ValeurCmp = HEADER_4;
+IdModule  = pin_strip_4;
+EndCmp
+
+BeginCmp
+TimeStamp = /5395789D;
+Reference = J5;
+ValeurCmp = HEADER_2;
+IdModule  = pin_strip_2;
+EndCmp
+
+BeginCmp
+TimeStamp = /5395871A;
+Reference = J6;
+ValeurCmp = HEADER_5;
+IdModule  = pin_strip_5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5395A6A4;
+Reference = J7;
+ValeurCmp = HEADER_3;
+IdModule  = pin_strip_3;
+EndCmp
+
+BeginCmp
+TimeStamp = /5395A888;
+Reference = J8;
+ValeurCmp = HEADER_3;
+IdModule  = pin_strip_3;
+EndCmp
+
+BeginCmp
+TimeStamp = /5395A89F;
+Reference = J9;
+ValeurCmp = HEADER_3;
+IdModule  = pin_strip_3;
+EndCmp
+
+BeginCmp
+TimeStamp = /5211160E;
+Reference = L1;
+ValeurCmp = FILTER;
+IdModule  = inductor_smd_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /53957C92;
+Reference = R1;
+ValeurCmp = 10k;
+IdModule  = r_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /53957FED;
+Reference = R2;
+ValeurCmp = 10k;
+IdModule  = r_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /53958018;
+Reference = R3;
+ValeurCmp = 10k;
+IdModule  = r_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /53958043;
+Reference = R4;
+ValeurCmp = 10k;
+IdModule  = r_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /53959F06;
+Reference = R5;
+ValeurCmp = 1k (option);
+IdModule  = r_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5395AF79;
+Reference = R6;
+ValeurCmp = 1k Option;
+IdModule  = r_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5395788E;
+Reference = SW1;
+ValeurCmp = SW_PUSH;
+IdModule  = PCB_PUSH;
+EndCmp
+
+BeginCmp
+TimeStamp = /53957FE0;
+Reference = SW2;
+ValeurCmp = SW_PUSH;
+IdModule  = PCB_PUSH;
+EndCmp
+
+BeginCmp
+TimeStamp = /5395800B;
+Reference = SW3;
+ValeurCmp = SW_PUSH;
+IdModule  = PCB_PUSH;
+EndCmp
+
+BeginCmp
+TimeStamp = /53958036;
+Reference = SW4;
+ValeurCmp = SW_PUSH;
+IdModule  = PCB_PUSH;
+EndCmp
+
+BeginCmp
+TimeStamp = /5395A3CC;
+Reference = U1;
+ValeurCmp = TCM809;
+IdModule  = sc70;
+EndCmp
+
+EndListe
