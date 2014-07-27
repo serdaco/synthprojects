@@ -342,10 +342,26 @@ void KeyboardHandler(char key,bool iskeyrelease)
   drumstatuscode = iskeyrelease ? _DRUMRELEASE_STATUSCODE : _DRUMPRESS_STATUSCODE;
   synthstatuscode = iskeyrelease ? _SYNTHRELEASE_STATUSCODE : _SYNTHPRESS_STATUSCODE;
   volumecode = iskeyrelease ? 0x00 : leadvolume;
-  if((key==PS2_PAGEUP)|| (key==PS2_PAGEDOWN))
+  if((key==PS2_PAGEUP)|| (key==PS2_PAGEDOWN) || (key=='+')|| (key=='-'))
   {
     if(!iskeyrelease) 
      {
+        if(key=='+') 
+        {
+          channel2_prog++;
+          if(channel2_prog > 0x7F)
+          {
+            channel2_prog = 0x00; 
+          }       
+        } 
+       if(key=='-') 
+        {
+          channel2_prog--;
+          if(channel2_prog > 0x7F)
+          {
+            channel2_prog = 0x7F; 
+          }       
+        } 
        if(key==PS2_PAGEUP) 
         {
           channel1_prog++;
@@ -431,6 +447,7 @@ void KeyboardHandler(char key,bool iskeyrelease)
      return;
    }
    
+  
    if(key=='2') 
    {
      if(!iskeyrelease) 
@@ -440,6 +457,16 @@ void KeyboardHandler(char key,bool iskeyrelease)
      }
      return;
    }
+   
+   if(key=='3') 
+   {
+     if(!iskeyrelease) 
+     {        
+       enabledrumming = (enabledrumming==0) ? 1 : 0;        
+     }
+     return;
+   }
+   
 }
 
 void setup() {
