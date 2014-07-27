@@ -29,6 +29,7 @@ int  tickflag = 0; // indicate if time tick has passed
 
 const int bicyclesetup = 0;
 const int pot1setup = 1;
+const int pot2setup = 1;
 const int button3Pin = 4;
 const int button4Pin = 5;
 const int dreamblaster_enable_pin = 6;
@@ -282,21 +283,37 @@ void PotControl(int potnr, int ctrlVal)
       midisetup_sam2195_nrpn_send(resonantchannel,0x01,0x20,(byte)ctrlVal); 
       //midiwrite(0xB0, 0x01,(byte) ctrlVal);  // modulation wheel
   }
+   if(potnr == 2)
+  {
+     midisetup_sam2195_nrpn_send(resonantchannel,0x01,0x21,(byte)ctrlVal);  // set resonance for channel resonantchannel
+  }
 }
 
 
 void ADC_handle(void)
 {
-  static int prevsensorVal = -1000;  
+  static int prevsensorVal1 = -1000;  
+  static int prevsensorVal2 = -1000;
   if(pot1setup)
   {
     int sensorValue = analogRead(A4);
     int ctrlValue;
-    if(abs(sensorValue-prevsensorVal)>3)  // filter noise from adc input
+    if(abs(sensorValue-prevsensorVal1)>3)  // filter noise from adc input
     {
-        prevsensorVal = sensorValue;
+        prevsensorVal1 = sensorValue;
         ctrlValue = sensorValue/8;
         PotControl(1,ctrlValue);
+    }
+  }
+  if(pot2setup)
+  {
+    int sensorValue = analogRead(A2);
+    int ctrlValue;
+    if(abs(sensorValue-prevsensorVal2)>3)  // filter noise from adc input
+    {
+        prevsensorVal2 = sensorValue;
+        ctrlValue = sensorValue/8;
+        PotControl(2,ctrlValue);
     }
   }
 }
