@@ -40,8 +40,13 @@ int enabledrumming = 0;
 int enablebassline = 0;
 int enablesynthline = 0;
 long seq_poscnt = 0;
-
-
+byte resonantchannel= 1;
+byte channel1_prog = 54;
+byte channel2_prog = 81;
+byte bassvolume = 0x50;
+byte drumvolume = 0x50;
+byte synthvolume = 0x50;
+byte leadvolume  = 0x70;
 
 #define _BASSDRUM_NOTE 0x24
 #define _SNAREDRUM_NOTE 0x26
@@ -49,6 +54,10 @@ long seq_poscnt = 0;
 #define _PEDALHIHAT_NOTE 0x2C
 #define _OPENHIHAT_NOTE 0x2E
 #define _CYMBAL_NOTE 0x31
+#define _DRUMPRESS_STATUSCODE 0x99
+#define _DRUMRELEASE_STATUSCODE 0x89
+#define _SYNTHPRESS_STATUSCODE 0x90
+#define _SYNTHRELEASE_STATUSCODE 0x80
 
 void midiwrite(int cmd, int pitch, int velocity) {
 
@@ -107,19 +116,19 @@ void basssubseq(long relativpos)
     {
     case 0 :
       midiwrite(0x81, 64, 0x00); 
-      midiwrite(0x91, 28, 0x70); 
+      midiwrite(0x91, 28, bassvolume); 
       break;
     case 4 :
       midiwrite(0x81, 28, 0x00); 
-      midiwrite(0x91, 40, 0x70);     
+      midiwrite(0x91, 40, bassvolume);     
       break;
     case 8 :
       midiwrite(0x81, 40, 0x00); 
-      midiwrite(0x91, 52, 0x70);     
+      midiwrite(0x91, 52, bassvolume);     
       break;
     case 12:
       midiwrite(0x81, 52, 0x00); 
-      midiwrite(0x91, 64, 0x70);   
+      midiwrite(0x91, 64, bassvolume);   
       break;        
     default :
       break;
@@ -132,16 +141,16 @@ void synthsubseq(long relativpos)
   switch(relativpos)
     {
     case 0 :
-       midiwrite(0x90, 40, 0x65); 
+       midiwrite(0x90, 40, synthvolume); 
       break;
     case 7:
-      midiwrite(0x80, 40, 0x00);    
+      midiwrite(0x80, 40, synthvolume);    
       break;
     case 8 :
-      midiwrite(0x90, 52, 0x65);     
+      midiwrite(0x90, 52, synthvolume);     
       break;
     case 15:
-      midiwrite(0x80, 52, 0x00);
+      midiwrite(0x80, 52, synthvolume);
       break;        
     default :
       break;
@@ -164,22 +173,22 @@ void drumseq(long seqpos)
     switch(relativpos)
     {
     case 0 :
-      midiwrite(0x99, _BASSDRUM_NOTE, 0x65);     
+      midiwrite(0x99, _BASSDRUM_NOTE, drumvolume);     
       break;
     case 4:
-      midiwrite(0x99, _SNAREDRUM_NOTE, 0x65);    
+      midiwrite(0x99, _SNAREDRUM_NOTE, drumvolume);    
       break;
     case 6 :
-      midiwrite(0x99, _BASSDRUM_NOTE, 0x65);     
+      midiwrite(0x99, _BASSDRUM_NOTE, drumvolume);     
       break;
     case 8 :
-      midiwrite(0x99, _BASSDRUM_NOTE, 0x65);     
+      midiwrite(0x99, _BASSDRUM_NOTE, drumvolume);     
       break;
     case 12:
-      midiwrite(0x99, _SNAREDRUM_NOTE, 0x65);    
+      midiwrite(0x99, _SNAREDRUM_NOTE, drumvolume);    
       break;
     case 14:
-      midiwrite(0x99,  _OPENHIHAT_NOTE, 0x65);   
+      midiwrite(0x99,  _OPENHIHAT_NOTE, drumvolume);   
 
       break;        
     default :
@@ -206,8 +215,8 @@ void timercallback()
 
 void setupvoices(void)
 {
-    midiprogchange(0xC0,95);
-    midiprogchange(0xC1,81);
+    midiprogchange(0xC0,channel1_prog);
+    midiprogchange(0xC1,channel2_prog);
 }
 void SomeButtonPressHandler(Button& butt)
 {  
@@ -232,13 +241,21 @@ void SomeButtonPressHandler(Button& butt)
     }
   }
 }
-void stopallnotes(void)
+void stopallnotes(byte selection = 0)
 {  
-      midiwrite(0x80, 52, 0x00); // switch off possible synth notes
-      midiwrite(0x80, 40, 0x00); // switch off possible synth notes     
-      midiwrite(0x80, 28, 0x00); // switch off possible bass notes
-      midiwrite(0x80, 40, 0x00); // switch off possible bass notes           
-      midiwrite(0x80, 52, 0x00); // switch off possible bass notes
+
+if (selection == 0 || selection ==2)
+{
+      midiwrite(0x90, 52, 0x00); // switch off possible synth notes
+      midiwrite(0x90, 40, 0x00); // switch off possible synth notes     
+}
+if (selection == 0 || selection ==1)
+{
+      midiwrite(0x91, 28, 0x00); // switch off possible bass notes
+      midiwrite(0x91, 40, 0x00); // switch off possible bass notes           
+      midiwrite(0x91, 52, 0x00); // switch off possible bass notes
+      midiwrite(0x91, 64, 0x00); // switch off possible bass notes
+}
 }
 
 
@@ -262,7 +279,7 @@ void PotControl(int potnr, int ctrlVal)
   if(potnr == 1)
   {
      //Serial.println(ctrlVal);
-      midisetup_sam2195_nrpn_send(1,0x01,0x20,(byte)ctrlVal); 
+      midisetup_sam2195_nrpn_send(resonantchannel,0x01,0x20,(byte)ctrlVal); 
       //midiwrite(0xB0, 0x01,(byte) ctrlVal);  // modulation wheel
   }
 }
@@ -293,21 +310,117 @@ void SomeButtonHoldHandler(Button& butt)
   }
 }
 
-void KeyboardHandler(char key)
+void KeyboardHandler(char key,bool iskeyrelease)
 {
+  static bool space_pressed = false;  
+  static bool enter_pressed = false;  
+  static bool zero_pressed = false;  
+  static bool c_pressed = false;  
+  static bool v_pressed = false;  
+  static bool b_pressed = false;  
+  byte drumstatuscode;
+  byte synthstatuscode;
+  byte volumecode;
+
+  drumstatuscode = iskeyrelease ? _DRUMRELEASE_STATUSCODE : _DRUMPRESS_STATUSCODE;
+  synthstatuscode = iskeyrelease ? _SYNTHRELEASE_STATUSCODE : _SYNTHPRESS_STATUSCODE;
+  volumecode = iskeyrelease ? 0x00 : leadvolume;
+  if((key==PS2_PAGEUP)|| (key==PS2_PAGEDOWN))
+  {
+    if(!iskeyrelease) 
+     {
+       if(key==PS2_PAGEUP) 
+        {
+          channel1_prog++;
+          if(channel1_prog > 0x7F)
+          {
+            channel1_prog = 0x00; 
+          }       
+        } 
+       if(key==PS2_PAGEDOWN)
+        {
+          channel1_prog--;
+          if(channel1_prog > 0x7F)
+          {
+            channel1_prog = 0x7F; 
+          }       
+        } 
+
+       setupvoices();
+     }
+  }
   if(key==' ') 
    {
-     midiwrite(0x99, _BASSDRUM_NOTE, 0x65);      
+     if(!space_pressed || iskeyrelease) 
+     {     
+        midiwrite(drumstatuscode, _BASSDRUM_NOTE, volumecode);      
+     }
+     space_pressed = !iskeyrelease;
      return;
    }
   if(key==PS2_ENTER) 
    {
-     midiwrite(0x99,_CLOSEDHIHAT_NOTE, 0x65); 
+     if(!enter_pressed  || iskeyrelease) 
+     { 
+      midiwrite(drumstatuscode,_CLOSEDHIHAT_NOTE, volumecode); 
+     }
+     enter_pressed = !iskeyrelease;
      return;
    }
   if(key=='0') 
    {
-     midiwrite(0x99,  _SNAREDRUM_NOTE, 0x65);      
+     if(!zero_pressed || iskeyrelease) 
+     { 
+      midiwrite(drumstatuscode,  _SNAREDRUM_NOTE, volumecode);      
+     }
+     zero_pressed = !iskeyrelease;
+     return;
+   }
+   if(key=='c') 
+   {
+     if(!c_pressed || iskeyrelease) 
+     { 
+      midiwrite(synthstatuscode,  40, volumecode);      
+     }
+     c_pressed = !iskeyrelease;
+     return;
+   }
+   if(key=='v') 
+   {
+     if(!v_pressed || iskeyrelease) 
+     { 
+      midiwrite(synthstatuscode,  45, volumecode);      
+     }
+     v_pressed = !iskeyrelease;
+     return;
+   }
+   
+   if(key=='b') 
+   {
+     if(!b_pressed || iskeyrelease) 
+     { 
+      midiwrite(synthstatuscode,  50, volumecode);      
+     }
+     b_pressed = !iskeyrelease;
+     return;
+   }
+   
+   if(key=='1') 
+   {
+     if(!iskeyrelease) 
+     {        
+       buttonState = (buttonState==0) ? 1 : 0;        
+     }
+     return;
+   }
+   
+   if(key=='2') 
+   {
+     if(!iskeyrelease) 
+     { 
+        enablebassline = enablebassline?0:1;
+        if(!enablebassline) {stopallnotes(1);};
+     }
      return;
    }
 }
@@ -329,7 +442,7 @@ void setup() {
   midisetup_sam2195_sysexcfg_send(0x02,0x00,0x04,0x00);  // disable mod wheel pitch variation
   midisetup_sam2195_sysexcfg_send(0x02,0x00,0x05,0x7F);  // set mod wheel tvf depth
 */
-  midisetup_sam2195_nrpn_send(1,0x01,0x21,(byte)0x7F);  // set resonance for channel 1
+  midisetup_sam2195_nrpn_send(resonantchannel,0x01,0x21,(byte)0x7F);  // set resonance for channel resonantchannel
   Timer1.attachInterrupt(timercallback);
   Timer1.initialize(tempodelay*1000);   
   
@@ -358,10 +471,11 @@ void loop() {
   button3.isPressed(); // trigger handling for button
   button4.isPressed(); // trigger handling for button
   
-  if (keyboard.available()) {
+  if (keyboard.availablerel()) {
       // read the next key
-      char c = keyboard.read();      
-      KeyboardHandler(c);
+      bool iskeyrelease = false;
+      char c = keyboard.readrel(iskeyrelease);      
+      KeyboardHandler(c,iskeyrelease);
   }
   
   if(tickflag)
@@ -382,7 +496,7 @@ void loop() {
       if(prevtimestamp)
       {           
         calctempodelay = curtimestamp - prevtimestamp;
-        if(calctempodelay > 200  && calctempodelay < 5000)  // if tempo is within range, calc tempo and enable drum
+        if(calctempodelay > 100  && calctempodelay < 3000)  // if tempo is within range, calc tempo and enable drum
         {
           if(enabledrumming == 0)
           {
