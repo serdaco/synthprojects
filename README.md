@@ -23,3 +23,9 @@ Arduino Nano Dreamblaster S1 hardware shield
 
 Kicad project files for the Arduino Nano shield from http://www.serdashop.com/ArduinoNanoSynthShield
 The Kicad project uses the excellent component library from Walter Lain : http://www.smisioto.eu/elettronica/kicad/kicad-en.htm
+
+MIDI Clock drum
+=================
+Test program for DBSHIELD1 : arduino shield for DreamBlaster X2,S2,.. on arduino UNO :
+see https://www.serdashop.com/DBSHIELD1 for this shield.
+MIDI Clock drum usage :  connect a midi signal with MIDI Clock to the midi input, the DBSHIELD1 will play a drum beat in sync with the incoming clock.
